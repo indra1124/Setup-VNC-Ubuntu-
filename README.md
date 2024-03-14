@@ -57,6 +57,13 @@ Section "Screen"
   EndSubSection
 EndSection
 ```
+# Uninstall Dummy video driver for ubuntu
+Removing dummy video driver using this code : 
+```bash
+sudo apt remove xserver-xorg-video-dummy
+sudo apt autoclean && sudo apt autoremove
+```
+
 
 
 

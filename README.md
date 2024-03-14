@@ -1,26 +1,5 @@
 # Monitoring PC through Ethernet / Wifi with VNC viewer
 
-Identify ethernet / wifi adapter
-
-```bash
-ifconfig
-sudo apt install -y nano
-sudo nano /etc/network/interfaces
-```
-Delete all text and then copy the following code:
-
-```bash
-auto lo
-iface lo inet loopback
-auto eth0 //eth0 = Refers to ethernet adapter 
-iface eth0 inet static
-address 192.168.123.23 // 23 is free to choose IP
-netmask 255.255.255.0 //default
-```
-Restart network interface
-```bash
-sudo systemctl networking restart
-```
 # Enabling Desktop Sharing
 Note: Desktop Sharing in Fresh installed Jetpack on Xavier NX is Crash, we need to solve that by following this [Link](http://vrzin.blogspot.com/2019/09/fix-desktop-sharing-setting-on-l4t.html)
 
@@ -52,34 +31,31 @@ sudo nano /usr/share/X11/xorg.conf.d/xorg.conf
 ```
 add following code:
 ```bash
-Section "Module"
-        
-    Disable     "dri"
-        SubSection  "extmod"
-            Option  "omit xfree86-dga"
-        EndSubSection
-    EndSection
+Section "Monitor"
+  Identifier "Monitor0"
+  HorizSync 28.0-80.0
+  VertRefresh 48.0-75.0
+  # https://arachnoid.com/modelines/
+  # 1920x1080 @ 60.00 Hz (GTF) hsync: 67.08 kHz; pclk: 172.80 MHz
+  Modeline "1920x1080_60.00" 172.80 1920 2040 2248 2576 1080 1081 1084 1118 -HSync +Vsync
+EndSection
 
-    Section "Device"
-        Identifier  "Tegra0"
-        Driver      "nvidia"
-        Option      "AllowEmptyInitialConfiguration" "true"
-    EndSection
+Section "Device"
+  Identifier "Card0"
+  Driver "dummy"
+  VideoRam 256000
+EndSection
 
-    Section "Monitor"
-       Identifier "DSI-0"
-       Option    "Ignore"
-    EndSection
-
-    Section "Screen"
-       Identifier    "Default Screen"
-       Monitor        "Configured Monitor"
-       Device        "Default Device"
-       SubSection "Display"
-           Depth    24
-           Virtual 1280 720
-       EndSubSection
-    EndSection
+Section "Screen"
+  DefaultDepth 24
+  Identifier "Screen0"
+  Device "Card0"
+  Monitor "Monitor0"
+  SubSection "Display"
+    Depth 24
+    Modes "1920x1080_60.00"
+  EndSubSection
+EndSection
 ```
 
 
